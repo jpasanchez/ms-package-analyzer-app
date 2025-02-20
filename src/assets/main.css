@@ -14,11 +14,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-body, p, span {
-  font-size: 1.4rem;
-}
+/*body, p, span {*/
+/*  font-size: 1.4rem;*/
+/*}*/
 
 #app {
   font-weight: normal;
 }
-

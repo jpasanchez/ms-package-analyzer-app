@@ -1,4 +1,6 @@
 <script setup>
+import { useFileUpload } from '@/composables/fileUpload.js';
+const { file, error, content, selectFile, removeFile } = useFileUpload();
 </script>
 
 <template>
@@ -8,13 +10,13 @@
       <div class="upload-box rounded-xl aspect-(--my-aspect-ratio) bg-white py-8 px-20 text-center">
         <div class="text-lg font-medium">Please Upload JSON File to Analyze</div>
         <div class="text-lg self-center font-medium">
-          <div>
+          <div class="select-none">
             <span class="material-symbols-outlined upload-icon ">upload</span>
           </div>
           Or drag and drop it
         </div>
-        <div class="text-lg text-center">
-          <button type="button" class="
+        <div class="text-lg text-center flex justify-center">
+          <label class="file-upload
           text-white
           uppercase
           bg-gray-800
@@ -24,10 +26,16 @@
           focus:ring-blue-300
           font-medium
           rounded-lg
-          text-base
           px-5
           py-2.5
-          cursor-pointer">Upload File</button>
+          cursor-pointer">
+            <input type="file" @change="selectFile" hidden />
+            <span class="text-sm">Upload File</span>
+          </label>
+        </div>
+        <div class="text-lg">
+          <div v-if="error" style="color: #FF9494">{{ error }}</div>
+          <div v-if="!error && file">Selected file: {{ file.name }}</div>
         </div>
       </div>
     </div>
@@ -77,4 +85,11 @@ main {
   display: block;
   font-size: 40px;
 }
+
+.file-upload {
+  display: flex;
+  justify-content: center;
+  max-width: 85%;
+}
+
 </style>
