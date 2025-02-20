@@ -1,9 +1,12 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['application/json'] } = {}) {
   const file = ref(null);
   const error = ref(null);
   const content = ref(null);
+
+  const step = ref(1);
+
 
   const selectFile = (event) => {
     const selectedFile = event.target.files[0];

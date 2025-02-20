@@ -17,3 +17,14 @@
   --color-white: #fff;
   --my-aspect-ratio: calc((35 / 48));
 }
+
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 4s;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
