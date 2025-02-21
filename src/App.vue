@@ -1,12 +1,6 @@
 <script setup>
-import { reactive, ref } from 'vue'
 import { useFileUpload } from '@/composables/fileUpload.js';
-const { file, error, content, selectFile, removeFile, checkVulnerabilities, vulnerabilities } = useFileUpload();
-const step = ref('upload');
-
-const setStep = (newStep) => {
-  step.value = newStep;
-};
+const { file, error, selectFile, removeFile, checkVulnerabilities, vulnerabilities, loading, step } = useFileUpload();
 
 </script>
 <template>
@@ -36,20 +30,24 @@ const setStep = (newStep) => {
             <div class="font-medium">File Name: </div>
             <div class="file-name rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center">
               {{ file.name }}
-              <button class="material-symbols-outlined cancel" @click="removeFile; setStep('upload')">cancel</button>
+              <button class="material-symbols-outlined cancel" @click="removeFile">cancel</button>
             </div>
           </div>
           <div v-if="step === 'showResults'" class="flex flex-col items-center">
-            <button class="button-redo rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center uppercase cursor-pointer text-white" @click="removeFile; setStep('upload')">Start Over</button>
+            <button class="button-redo rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center uppercase cursor-pointer text-white" @click="removeFile">Start Over</button>
           </div>
         </div>
         <div class="text-lg text-center flex justify-center">
           <label v-if="step === 'upload'" class="file-upload text-white uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">
-            <input type="file" @change="(e) => { selectFile(e); if (!error) setStep('validate'); }" hidden />
+            <input type="file" @change="(e) => { selectFile(e) }" hidden />
             <span class="text-sm">Upload File</span>
           </label>
           <div v-if="step === 'validate'" class="file-upload">
-            <button @click="setStep('showResults'); checkVulnerabilities();" class="text-white text-sm uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">Analyze</button>
+            <button @click="checkVulnerabilities();"
+              class="text-white text-sm uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-3 cursor-pointer">
+                Analyze
+              <span v-if="loading" class="material-symbols-outlined spinner">progress_activity</span>
+            </button>
           </div>
         </div>
 
@@ -165,6 +163,24 @@ main {
 
   &:hover {
     background-color: var(--color-darker-red);
+  }
+}
+
+.spinner {
+  font-size: 15px;
+  display: inline-block;
+  animation: spin 2s infinite linear;
+  position: relative;
+  left: 6px;
+  top: 2px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

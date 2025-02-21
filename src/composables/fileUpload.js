@@ -5,9 +5,12 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
   const error = ref(null);
   const content = ref(null);
   const vulnerabilities = ref([]);
+  const loading = ref(false);
+  const step = ref('upload');
 
-  const step = ref(1);
-
+  const setStep = (newStep) => {
+    step.value = newStep;
+  };
 
   const selectFile = (event) => {
     const selectedFile = event.target.files[0];
@@ -37,15 +40,22 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
       error.value = 'Error reading file';
     };
     reader.readAsText(file);
+
+    if (!error.value) setStep('validate');
   };
 
   const removeFile = () => {
     file.value = null;
     content.value = null;
     error.value = null;
+
+    setStep('upload')
   };
 
   const checkVulnerabilities = async () => {
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    loading.value = true;
+
     if (!content.value) return;
     try {
       const jsonData = JSON.parse(content.value);
@@ -62,27 +72,29 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
             package: { name: pkg, ecosystem: 'npm' }
           })
         });
+        await sleep(1000);
         const data = await response.json();
         if (data.vulns && data.vulns.length > 0) {
-          console.log('hery');
-          console.log(data.vulns);
           results.push({ package: pkg, line: index + 1 });
         }
       }
 
-      console.log(results);
-
       vulnerabilities.value = results;
     } catch (err) {
       console.error('Error analyzing vulnerabilities:', err);
+    } finally {
+      loading.value = false;
+      setStep('showResults');
     }
   };
 
   return {
     file,
     error,
-    content,
     vulnerabilities,
+    loading,
+    step,
+    setStep,
     selectFile,
     removeFile,
     checkVulnerabilities
