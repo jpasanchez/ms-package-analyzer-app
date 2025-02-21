@@ -19,8 +19,8 @@
   --color-dark-red: #ec221f;
   --color-darker-red: #c11c1a;
   --my-aspect-ratio: calc((35 / 48));
+  --my-aspect-ratio-2: calc((816 / 207));
 }
-
 
 .v-enter-active,
 .v-leave-active {

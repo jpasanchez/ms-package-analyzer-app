@@ -59,28 +59,13 @@ const { file, error, selectFile, removeFile, checkVulnerabilities, vulnerabiliti
 
 
       <div class="results-box">
-<!--        <pre v-if="step === 'showResults'">{{ content }}</pre>-->
-
-<!--        <pre>{{ vulnerabilities }}</pre>-->
-<!--        <div v-if="step === 'showResults'">-->
-<!--          <div v-if="vulnerabilities.length > 0">-->
-<!--            <h3>Vulnerable Packages:</h3>-->
-<!--            <ul>-->
-<!--              <li v-for="vuln in vulnerabilities" :key="vuln.package">-->
-<!--                {{ vuln.package }} (Line: {{ vuln.line }})-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--          </div>-->
-<!--        </div>-->
-
-
-        <div v-if="vulnerabilities.length > 0">
-          <h3>Vulnerable Packages:</h3>
-          <ul>
-            <li v-for="vuln in vulnerabilities" :key="vuln.package">
+        <div v-if="vulnerabilities.length > 0 && step === 'showResults'">
+          <h3 class="text-2xl text-white">Vulnerable Packages:</h3>
+          <transition-group name="staggered" tag="ul" class="grid gap-3 mt-6">
+            <li v-for="(vuln, index) in vulnerabilities" :key="vuln.package" :style="{ animationDelay: `${index * 0.3}s` }" class="vuln-item rounded-xl bg-white aspect-(--my-aspect-ratio-2) py-8 px-20">
               {{ vuln.package }} (Line: {{ vuln.line }})
             </li>
-          </ul>
+          </transition-group>
         </div>
       </div>
     </div>
@@ -111,6 +96,10 @@ const { file, error, selectFile, removeFile, checkVulnerabilities, vulnerabiliti
   max-width: 354px;
   display: grid;
   grid-template-rows: auto 1fr auto;
+
+  @media (min-width: 1600px) {
+    left: 460px;
+  }
 }
 
 main {
@@ -156,6 +145,10 @@ main {
   position: absolute;
   top: 10vw;
   left: 11.1111111111vw;
+
+  @media (min-width: 1600px) {
+    left: 150px;
+  }
 }
 
 .button-redo {
@@ -181,6 +174,27 @@ main {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.vuln-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.staggered-enter-active {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
