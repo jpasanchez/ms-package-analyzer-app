@@ -15,6 +15,8 @@
   --color-gray-950: oklch(0.13 0.028 261.692);
   --color-black: #000;
   --color-white: #fff;
+  --color-red: #ff7777;
+  --color-dark-red: #ec221f;
   --my-aspect-ratio: calc((35 / 48));
 }
 

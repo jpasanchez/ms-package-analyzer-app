@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useFileUpload } from '@/composables/fileUpload.js';
-const { file, error, content, selectFile, removeFile } = useFileUpload();
+const { file, error, content, selectFile, removeFile, checkVulnerabilities } = useFileUpload();
 const step = ref('upload');
+const vulnerabilities = ref([]);
 
 const setStep = (newStep) => {
   step.value = newStep;
@@ -14,14 +15,17 @@ const setStep = (newStep) => {
   <main>
     <div class="upload-container">
       <div class="upload-box rounded-xl aspect-(--my-aspect-ratio) bg-white py-8 px-20 text-center">
-        <div v-if="step === 'upload'" class="text-lg font-medium">Please Upload JSON File to Analyze</div>
-
-        <div v-if="step === 'validate'" class="text-lg font-medium">
-          Ready to Analyze File
-          <div class="select-none">
-            <span class="material-symbols-outlined task-alt ">task_alt</span>
+        <div class="text-lg font-medium">
+          <div v-if="step === 'upload'">Please Upload JSON File to Analyze</div>
+          <div v-if="step === 'validate'">
+            Ready to Analyze File
+            <div class="select-none">
+              <span class="material-symbols-outlined task-alt ">task_alt</span>
+            </div>
           </div>
+          <div v-if="step === 'showResults'">Please review packages with vulnerabilities</div>
         </div>
+
         <div class="text-lg self-center font-medium">
           <div v-if="step === 'upload'">
             <div class="select-none">
@@ -33,48 +37,40 @@ const setStep = (newStep) => {
             <div class="font-medium">File Name: </div>
             <div class="file-name rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center">
               {{ file.name }}
-              <button class="material-symbols-outlined cancel" @click="() => { removeFile; setStep('upload'); }">cancel</button>
+              <button class="material-symbols-outlined cancel" @click="removeFile; setStep('upload')">cancel</button>
             </div>
-<!--            <button v-if="file" @click="removeFile">Remove File</button>-->
-<!--            <button v-if="step === 'validate'" @click="setStep('readyToAnalyze')">Validate File</button>-->
+          </div>
+          <div v-if="step === 'showResults'" class="flex flex-col items-center">
+            <button class="rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center uppercase cursor-pointer text-white" style="background-color: var(--color-dark-red)" @click="removeFile; setStep('upload')">Start Over</button>
           </div>
         </div>
         <div class="text-lg text-center flex justify-center">
-          <label v-if="step === 'upload'" class="file-upload
-            text-white
-            uppercase
-            bg-gray-800
-            hover:bg-gray-900
-            focus:outline-none
-            focus:ring-4
-            focus:ring-blue-300
-            font-medium
-            rounded-lg
-            px-5
-            py-2.5
-            cursor-pointer">
+          <label v-if="step === 'upload'" class="file-upload text-white uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">
             <input type="file" @change="(e) => { selectFile(e); if (!error) setStep('validate'); }" hidden />
             <span class="text-sm">Upload File</span>
           </label>
           <div v-if="step === 'validate'" class="file-upload">
-            <button @click="setStep('showResults')" class="
-            text-white
-            text-sm
-            uppercase
-            bg-gray-800
-            hover:bg-gray-900
-            focus:outline-none
-            focus:ring-4
-            focus:ring-blue-300
-            font-medium
-            rounded-lg
-            px-5
-            py-2.5
-            cursor-pointer">Analyze</button>
+            <button @click="setStep('showResults'); checkVulnerabilities(vulnerabilities);" class="text-white text-sm uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">Analyze</button>
           </div>
         </div>
+
+        <!-- Errors -->
         <div class="text-lg">
-          <div v-if="error" style="color: #FF9494">{{ error }}</div>
+          <div v-if="error" style="color: var(--color-red)">{{ error }}</div>
+        </div>
+      </div>
+
+
+      <div class="results-box">
+        <pre v-if="step === 'showResults'">{{ content }}</pre>
+
+        <div v-if="vulnerabilities.length > 0">
+          <h3>Vulnerable Packages:</h3>
+          <ul>
+            <li v-for="issue in vulnerabilities" :key="issue.package">
+              {{ issue.package }} (Line: {{ issue.line }})
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -142,5 +138,13 @@ main {
   font-size: 30px;
   transform: translate(50%, -50%);
   cursor: pointer;
+}
+
+.results-box {
+  display: block;
+  grid-column-start: 2;
+  position: absolute;
+  top: 10vw;
+  left: 11.1111111111vw;
 }
 </style>

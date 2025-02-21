@@ -44,11 +44,41 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
     error.value = null;
   };
 
+  const checkVulnerabilities = async (vulnerabilities) => {
+    if (!content.value) return;
+    try {
+      const jsonData = JSON.parse(content.value);
+      if (!jsonData.dependencies) return;
+
+      const results = [];
+      const dependencies = Object.keys(jsonData.dependencies);
+
+      for (const [index, pkg] of dependencies.entries()) {
+        const response = await fetch(`https://api.osv.dev/v1/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            package: { name: pkg, ecosystem: 'npm' }
+          })
+        });
+        const data = await response.json();
+        if (data.issues && data.issues.length > 0) {
+          results.push({ package: pkg, line: index + 1 });
+        }
+      }
+
+      vulnerabilities.value = results;
+    } catch (err) {
+      console.error('Error analyzing vulnerabilities:', err);
+    }
+  };
+
   return {
     file,
     error,
     content,
     selectFile,
     removeFile,
+    checkVulnerabilities
   };
 }
