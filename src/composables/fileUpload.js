@@ -1,9 +1,10 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['application/json'] } = {}) {
   const file = ref(null);
   const error = ref(null);
   const content = ref(null);
+  const vulnerabilities = ref([]);
 
   const step = ref(1);
 
@@ -44,7 +45,7 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
     error.value = null;
   };
 
-  const checkVulnerabilities = async (vulnerabilities) => {
+  const checkVulnerabilities = async () => {
     if (!content.value) return;
     try {
       const jsonData = JSON.parse(content.value);
@@ -54,7 +55,7 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
       const dependencies = Object.keys(jsonData.dependencies);
 
       for (const [index, pkg] of dependencies.entries()) {
-        const response = await fetch(`https://api.osv.dev/v1/query`, {
+        const response = await fetch(`http://localhost:3001/api/osv`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -62,10 +63,14 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
           })
         });
         const data = await response.json();
-        if (data.issues && data.issues.length > 0) {
+        if (data.vulns && data.vulns.length > 0) {
+          console.log('hery');
+          console.log(data.vulns);
           results.push({ package: pkg, line: index + 1 });
         }
       }
+
+      console.log(results);
 
       vulnerabilities.value = results;
     } catch (err) {
@@ -77,6 +82,7 @@ export function useFileUpload({ maxSize = 5 * 1024 * 1024, allowedTypes = ['appl
     file,
     error,
     content,
+    vulnerabilities,
     selectFile,
     removeFile,
     checkVulnerabilities

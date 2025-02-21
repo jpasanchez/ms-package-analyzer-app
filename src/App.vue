@@ -1,9 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useFileUpload } from '@/composables/fileUpload.js';
-const { file, error, content, selectFile, removeFile, checkVulnerabilities } = useFileUpload();
+const { file, error, content, selectFile, removeFile, checkVulnerabilities, vulnerabilities } = useFileUpload();
 const step = ref('upload');
-const vulnerabilities = ref([]);
 
 const setStep = (newStep) => {
   step.value = newStep;
@@ -41,7 +40,7 @@ const setStep = (newStep) => {
             </div>
           </div>
           <div v-if="step === 'showResults'" class="flex flex-col items-center">
-            <button class="rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center uppercase cursor-pointer text-white" style="background-color: var(--color-dark-red)" @click="removeFile; setStep('upload')">Start Over</button>
+            <button class="button-redo rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center uppercase cursor-pointer text-white" @click="removeFile; setStep('upload')">Start Over</button>
           </div>
         </div>
         <div class="text-lg text-center flex justify-center">
@@ -50,7 +49,7 @@ const setStep = (newStep) => {
             <span class="text-sm">Upload File</span>
           </label>
           <div v-if="step === 'validate'" class="file-upload">
-            <button @click="setStep('showResults'); checkVulnerabilities(vulnerabilities);" class="text-white text-sm uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">Analyze</button>
+            <button @click="setStep('showResults'); checkVulnerabilities();" class="text-white text-sm uppercase bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 cursor-pointer">Analyze</button>
           </div>
         </div>
 
@@ -62,13 +61,26 @@ const setStep = (newStep) => {
 
 
       <div class="results-box">
-        <pre v-if="step === 'showResults'">{{ content }}</pre>
+<!--        <pre v-if="step === 'showResults'">{{ content }}</pre>-->
+
+<!--        <pre>{{ vulnerabilities }}</pre>-->
+<!--        <div v-if="step === 'showResults'">-->
+<!--          <div v-if="vulnerabilities.length > 0">-->
+<!--            <h3>Vulnerable Packages:</h3>-->
+<!--            <ul>-->
+<!--              <li v-for="vuln in vulnerabilities" :key="vuln.package">-->
+<!--                {{ vuln.package }} (Line: {{ vuln.line }})-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--          </div>-->
+<!--        </div>-->
+
 
         <div v-if="vulnerabilities.length > 0">
           <h3>Vulnerable Packages:</h3>
           <ul>
-            <li v-for="issue in vulnerabilities" :key="issue.package">
-              {{ issue.package }} (Line: {{ issue.line }})
+            <li v-for="vuln in vulnerabilities" :key="vuln.package">
+              {{ vuln.package }} (Line: {{ vuln.line }})
             </li>
           </ul>
         </div>
@@ -146,5 +158,13 @@ main {
   position: absolute;
   top: 10vw;
   left: 11.1111111111vw;
+}
+
+.button-redo {
+  background-color: var(--color-dark-red);
+
+  &:hover {
+    background-color: var(--color-darker-red);
+  }
 }
 </style>
