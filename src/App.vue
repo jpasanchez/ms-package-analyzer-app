@@ -4,16 +4,8 @@ import { useFileUpload } from '@/composables/fileUpload.js';
 const { file, error, content, selectFile, removeFile } = useFileUpload();
 const step = ref('upload');
 
-const proceedToValidation = () => {
-  step.value = 'validate';
-};
-
-const proceedToAnalysis = () => {
-  step.value = 'readyToAnalyze';
-};
-
-const analyzeFile = () => {
-  step.value = 'showResults';
+const setStep = (newStep) => {
+  step.value = newStep;
 };
 
 </script>
@@ -37,10 +29,14 @@ const analyzeFile = () => {
             </div>
             Or drag and drop it
           </div>
-          <div v-if="step === 'validate'">
-            <p>File Name: {{ file.name }}</p>
+          <div v-if="step === 'validate'" class="flex flex-col items-center">
+            <div class="font-medium">File Name: </div>
+            <div class="file-name rounded-full bg-gray-200 mt-2 p-2 text-sm font-normal w-3/4 text-center">
+              {{ file.name }}
+              <button class="material-symbols-outlined cancel" @click="() => { removeFile; setStep('upload'); }">cancel</button>
+            </div>
 <!--            <button v-if="file" @click="removeFile">Remove File</button>-->
-<!--            <button v-if="step === 'validate'" @click="proceedToAnalysis">Validate File</button>-->
+<!--            <button v-if="step === 'validate'" @click="setStep('readyToAnalyze')">Validate File</button>-->
           </div>
         </div>
         <div class="text-lg text-center flex justify-center">
@@ -57,11 +53,11 @@ const analyzeFile = () => {
             px-5
             py-2.5
             cursor-pointer">
-              <input type="file" @change="(e) => { selectFile(e); if (!error) proceedToValidation(); }" hidden />
-              <span class="text-sm">Upload File</span>
+            <input type="file" @change="(e) => { selectFile(e); if (!error) setStep('validate'); }" hidden />
+            <span class="text-sm">Upload File</span>
           </label>
           <div v-if="step === 'validate'" class="file-upload">
-            <button @click="proceedToAnalysis" class="
+            <button @click="setStep('showResults')" class="
             text-white
             text-sm
             uppercase
@@ -79,14 +75,7 @@ const analyzeFile = () => {
         </div>
         <div class="text-lg">
           <div v-if="error" style="color: #FF9494">{{ error }}</div>
-<!--          <div v-if="!error && file">Selected file: {{ file.name }}</div>-->
         </div>
-
-<!--        <div v-if="step !== 'upload'">-->
-<!--          <p>Selected file: {{ file.name }}</p>-->
-<!--          <button v-if="file" @click="removeFile">Remove File</button>-->
-<!--          <button v-if="step === 'validate'" @click="proceedToAnalysis">Validate File</button>-->
-<!--        </div>-->
       </div>
     </div>
   </main>
@@ -142,10 +131,16 @@ main {
   margin-top: 8px;
 }
 
-.file-upload {
-  display: flex;
-  justify-content: center;
-  max-width: 85%;
+.file-name {
+  position: relative;
 }
 
+.cancel {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 30px;
+  transform: translate(50%, -50%);
+  cursor: pointer;
+}
 </style>
