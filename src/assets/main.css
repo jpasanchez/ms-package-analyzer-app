@@ -17,3 +17,32 @@ body {
 #app {
   font-weight: normal;
 }
+
+.dropzone-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f4f4;
+  border: 2px dashed #007bff;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.drop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 123, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  z-index: 1000;
+  color: var(--color-white);
+}
