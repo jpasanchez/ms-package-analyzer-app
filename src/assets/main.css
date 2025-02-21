@@ -19,30 +19,30 @@ body {
 }
 
 .dropzone-container {
+  display: flex;
   position: relative;
+  align-items: center;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f4f4f4;
+  transition: all 0.3s ease-in-out;
   border: 2px dashed #007bff;
   border-radius: 10px;
-  transition: all 0.3s ease-in-out;
+  background: #f4f4f4;
 }
 
 .drop-overlay {
+  display: flex;
   position: fixed;
+  z-index: 1000;
   top: 0;
   left: 0;
+  align-items: center;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 123, 255, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: var(--color-white);
   font-size: 24px;
   font-weight: bold;
-  z-index: 1000;
-  color: var(--color-white);
 }

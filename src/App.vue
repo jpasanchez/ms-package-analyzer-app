@@ -128,15 +128,15 @@ onUnmounted(() => {
 }
 
 .upload-box {
+  display: grid;
   position: absolute;
   top: calc(100vw / 10);
   left: calc(100vw / 9);
+  grid-template-rows: auto 1fr auto;
   width: 100%;
   max-width: 354px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
 
-  @media (min-width: 1600px) {
+  @media (width >= 1600px) {
     left: 460px;
   }
 }
@@ -161,8 +161,8 @@ main {
 
 .task-alt {
   display: block;
-  font-size: 38px;
   margin-top: 8px;
+  font-size: 38px;
 }
 
 .file-name {
@@ -173,19 +173,19 @@ main {
   position: absolute;
   top: 6px;
   right: 6px;
-  font-size: 30px;
   transform: translate(50%, -50%);
+  font-size: 30px;
   cursor: pointer;
 }
 
 .results-box {
   display: block;
-  grid-column-start: 2;
   position: absolute;
   top: 10vw;
-  left: 11.1111111111vw;
+  left: 11.11vw;
+  grid-column-start: 2;
 
-  @media (min-width: 1600px) {
+  @media (width >= 1600px) {
     left: 150px;
   }
 }
@@ -199,41 +199,43 @@ main {
 }
 
 .spinner {
-  font-size: 15px;
   display: inline-block;
-  animation: spin 2s infinite linear;
   position: relative;
-  left: 6px;
   top: 2px;
+  left: 6px;
+  animation: spin 2s infinite linear;
+  font-size: 15px;
 }
 
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
 
 .vuln-item {
-  opacity: 0;
   transform: translateY(20px);
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
 }
 
 .staggered-enter-active {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fade-in-up 0.5s ease-out forwards;
 }
 
-@keyframes fadeInUp {
+@keyframes fade-in-up {
   0% {
-    opacity: 0;
     transform: translateY(20px);
+    opacity: 0;
   }
+
   100% {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 </style>
